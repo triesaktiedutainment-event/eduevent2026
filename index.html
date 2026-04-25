@@ -8,19 +8,19 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
+        /* Animasi halus saat hover button */
+        .btn-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
-
-    
 <body class="min-h-screen flex items-center justify-center p-4">
 
     <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-slate-100">
         <div class="text-center mb-8">
-            <div class="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200">
-                <i class="fas fa-vr-cardboard text-white text-3xl"></i>
+            <div class="flex items-center justify-center mx-auto mb-4">
+                <img src="logo Edutainment.png" alt="Logo Triesakti Edutainment" class="h-20 w-auto object-contain drop-shadow-sm">
             </div>
             <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Input Data Event</h2>
-            <p class="text-slate-500 text-sm font-medium">TRIESAKTI EDUTAINMENT - Sistem Cloud</p>
+            <p class="text-slate-500 text-sm font-bold tracking-wide">TRIESAKTI EDUTAINMENT - Sistem Cloud</p>
         </div>
 
         <form id="formEvent" class="space-y-4">
@@ -73,39 +73,41 @@
                 </div>
             </div>
 
-            <button type="submit" id="btnSave" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-blue-600 transition-all duration-300 shadow-xl shadow-slate-200 mt-4 flex items-center justify-center tracking-widest text-sm">
+            <button type="submit" id="btnSave" class="btn-hover w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-blue-600 shadow-xl shadow-slate-200 mt-4 flex items-center justify-center tracking-widest text-sm">
                 <i class="fas fa-paper-plane mr-2"></i> SIMPAN KE DATABASE
             </button>
         </form>
 
-        <p class="text-center text-[9px] text-slate-400 mt-6 uppercase tracking-[0.2em] font-bold">TRIESAKTI EDUTAINMENT • Real-Time System</p>
+        <p class="text-center text-[9px] text-slate-400 mt-6 uppercase tracking-[0.2em] font-bold italic">Reliable Solution for Educational Technology</p>
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxziioX9qXZedgZPMoYnizMj9IxeN7jHzfCDYckRRYJ87CryWvnxyLPQvacWazA-Rc/exec';
+        // SINKRONISASI DENGAN GOOGLE APPS SCRIPT ANDA
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxakRVXqjxR4LLLrtnFL_c1vudbIGlaW0WapsfUiRsO3JMYhCGzmiRHWIBWfvlbdzg7/exec';
 
-        // Logika Sesi Otomatis
+        // UPDATE SESI OTOMATIS BERDASARKAN DURASI
         function updateSesi() {
-            const d = document.getElementById('durasi').value;
-            const s = document.getElementById('sesi');
-            s.innerHTML = '';
-            if(d == 1) {
-                s.add(new Option('Fullday', 'Fullday'));
+            const durasi = document.getElementById('durasi').value;
+            const sesiSelect = document.getElementById('sesi');
+            sesiSelect.innerHTML = '';
+            
+            if(durasi == 1) {
+                sesiSelect.add(new Option('Fullday', 'Fullday'));
             } else {
-                for(let i=1; i<=d; i++) {
-                    s.add(new Option('Hari ke-' + i, 'Hari ke-' + i));
+                for(let i=1; i<=durasi; i++) {
+                    sesiSelect.add(new Option('Hari ke-' + i, 'Hari ke-' + i));
                 }
             }
         }
         window.onload = updateSesi;
 
-        // Proses Pengiriman Data
+        // PROSES PENGIRIMAN DATA KE DATABASE CLOUD
         document.getElementById('formEvent').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
             
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> MENGIRIM...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> SEDANG MENGIRIM...';
 
             const payload = {
                 namaSekolah: document.getElementById('namaSekolah').value,
@@ -117,22 +119,21 @@
             };
 
             try {
-                // Mengirim data menggunakan metode POST ke Google Apps Script
-                const response = await fetch(SCRIPT_URL, {
+                // Proses pengiriman data menggunakan mode 'no-cors' agar kompatibel dengan Google Script
+                await fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors', // Mengizinkan pembacaan respon
+                    mode: 'no-cors',
                     cache: 'no-cache',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                // Google Apps Script akan mengalihkan (redirect), fetch akan menangkapnya sebagai sukses
-                alert('🚀 Sukses! Data berhasil masuk ke Google Sheet.');
+                alert('✅ BERHASIL! Data telah aman tersimpan di Google Sheet.');
                 document.getElementById('formEvent').reset();
                 updateSesi();
             } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Terjadi kesalahan. Cek koneksi atau pastikan Deploy Apps Script sudah "Anyone".');
+                console.error('Koneksi Error:', error);
+                alert('❌ GAGAL! Periksa koneksi internet Anda atau status Google Script.');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> SIMPAN KE DATABASE';
