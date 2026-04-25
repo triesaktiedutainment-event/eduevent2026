@@ -66,7 +66,7 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxakRVXqjxR4LLLrtnFL_c1vudbIGlaW0WapsfUiRsO3JMYhCGzmiRHWIBWfvlbdzg7/exec';
-        const ACCESS = { "admin123": "PIMPINAN PUSAT", "maros2026": "MAROS", "palopo2026": "PALOPO" };
+        const ACCESS = { "admin123": "PIMPINAN PUSAT", "maros2026": "MAROS", "palopo2026": "PALOPO", "tarakan2026": "TARAKAN" };
         let currentWil = "";
 
         function handleLogin() {
@@ -87,31 +87,34 @@
                 const res = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
                 const data = await res.json();
                 
-                // MENCARI KOLOM SECARA DINAMIS (Anti Gagal Sinkron)
                 const filtered = data.filter(item => {
                     if(currentWil === "PIMPINAN PUSAT") return true;
+                    // Mencari kolom wilayah secara fleksibel
                     const keyWil = Object.keys(item).find(k => k.toLowerCase().includes('wilayah') || k.toLowerCase().includes('kota'));
                     return item[keyWil]?.toString().toUpperCase() === currentWil;
                 });
 
                 render(filtered);
-            } catch (e) { alert("Koneksi gagal atau data tidak ditemukan."); }
+            } catch (e) { console.error(e); }
         }
 
         function render(data) {
             let totalVR = 0, totalDapo = 0;
             const rows = data.map(item => {
-                // Menyamakan nama kolom dari Sheets Bapak
-                const v = parseInt(item.siswavr || item.ikutvr || item.vr || 0);
-                const d = parseInt(item.siswadapodik || item.dapodik || item.jmlsiswa || 0);
-                totalVR += v; totalDapo += d;
+                // PENYESUAIAN NAMA KOLOM SESUAI FORM INPUT BAPAK
+                // Mengambil data dari 'siswaikutvr' dan 'jmlsiswadapodik' (huruf kecil dari JSON Apps Script)
+                const v = parseInt(item.siswaikutvr || item.siswavr || 0);
+                const d = parseInt(item.jmlsiswadapodik || item.siswadapodik || 0);
+                
+                totalVR += v; 
+                totalDapo += d;
                 const p = d > 0 ? ((v/d)*100).toFixed(0) : 0;
 
                 return `<tr class="hover:bg-slate-50">
-                    <td class="p-6">${item.namasekolah || item.sekolah}</td>
+                    <td class="p-6 font-black">${item.namasekolah || "Tanpa Nama"}</td>
                     <td class="p-6 text-center">${d}</td>
-                    <td class="p-6 text-center text-blue-600">${v}</td>
-                    <td class="p-6 text-center"><span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px]">${p}%</span></td>
+                    <td class="p-6 text-center text-blue-600 font-black">${v}</td>
+                    <td class="p-6 text-center"><span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] font-black">${p}% SIAP</span></td>
                 </tr>`;
             }).join('');
 
