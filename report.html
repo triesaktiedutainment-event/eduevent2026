@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Executive Report - Triesakti Edutainment</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .glass-card {
@@ -23,10 +24,10 @@
             <h2 class="text-xl font-black text-slate-800 uppercase mb-2">Akses Pimpinan</h2>
             <p class="text-slate-400 text-[10px] mb-6 font-bold uppercase tracking-widest">Masukkan Kode Wilayah</p>
             
-            <input type="password" id="access-code" placeholder="Kode Akses..." 
+            <input type="password" id="access-code" placeholder="••••••••" 
                 class="w-full p-4 bg-slate-50 border-2 border-slate-100 focus:border-blue-500 rounded-2xl outline-none text-center font-bold tracking-widest mb-4 transition-all">
             
-            <button onclick="checkAccess()" class="w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-blue-600 transition shadow-lg active:scale-95">
+            <button onclick="handleLogin()" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl hover:bg-blue-700 transition shadow-lg active:scale-95 text-sm tracking-widest">
                 BUKA LAPORAN
             </button>
             
@@ -48,41 +49,53 @@
                     </div>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="fetchData()" class="bg-white px-5 py-2.5 rounded-xl text-[10px] font-black text-slate-700 shadow-sm border border-slate-200 hover:bg-blue-50">
-                        <i class="fas fa-sync-alt mr-2"></i> UPDATE DATA
+                    <button onclick="fetchData()" class="bg-white px-5 py-2.5 rounded-xl text-[10px] font-black text-slate-700 shadow-sm border border-slate-200 hover:bg-blue-50 transition-all uppercase">
+                        <i class="fas fa-sync-alt mr-2"></i> Update Data
                     </button>
-                    <button onclick="location.reload()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition">LOGOUT</button>
+                    <button onclick="location.reload()" class="bg-red-50 text-red-600 px-5 py-2.5 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition uppercase">Logout</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="glass-card p-8 rounded-[2.5rem] border-b-4 border-slate-800 text-center">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Total Sekolah</p>
-                    <h2 id="stat-sekolah" class="text-5xl font-black text-slate-800">0</h2>
+                    <h2 id="stat-sekolah" class="text-5xl font-black text-slate-800 tracking-tighter text-center">0</h2>
                 </div>
                 <div class="glass-card p-8 rounded-[2.5rem] border-b-4 border-blue-600 text-center">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Partisipan VR</p>
-                    <h2 id="stat-vr" class="text-5xl font-black text-blue-600">0</h2>
+                    <h2 id="stat-vr" class="text-5xl font-black text-blue-600 tracking-tighter text-center">0</h2>
                 </div>
                 <div class="glass-card p-8 rounded-[2.5rem] border-b-4 border-emerald-500 text-center">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Efektivitas</p>
-                    <h2 id="stat-persen" class="text-5xl font-black text-emerald-600">0%</h2>
+                    <h2 id="stat-persen" class="text-5xl font-black text-emerald-600 tracking-tighter text-center">0%</h2>
                 </div>
             </div>
 
-            <div class="lg:col-span-12 glass-card rounded-[2.5rem] overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400 border-b border-slate-100">
-                            <tr>
-                                <th class="p-6">Sekolah</th>
-                                <th class="p-6 text-center">Dapodik</th>
-                                <th class="p-6 text-center">VR</th>
-                                <th class="p-6 text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabel-body" class="divide-y divide-slate-100 text-sm font-bold text-slate-700"></tbody>
-                    </table>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-8 glass-card p-8 rounded-[2.5rem]">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6"><i class="fas fa-chart-bar mr-2 text-blue-500"></i> Grafik Performa Sekolah</h3>
+                    <div style="position: relative; height:300px; width:100%"><canvas id="chartUtama"></canvas></div>
+                </div>
+
+                <div class="lg:col-span-4 glass-card p-8 rounded-[2.5rem]">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6"><i class="fas fa-chart-pie mr-2 text-purple-500"></i> Komposisi Data</h3>
+                    <div style="position: relative; height:300px; width:100%"><canvas id="chartLingkaran"></canvas></div>
+                </div>
+
+                <div class="lg:col-span-12 glass-card rounded-[2.5rem] overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400 border-b border-slate-100">
+                                <tr>
+                                    <th class="p-6">Nama Sekolah</th>
+                                    <th class="p-6 text-center">Siswa Dapodik</th>
+                                    <th class="p-6 text-center">Peserta VR</th>
+                                    <th class="p-6 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-body" class="divide-y divide-slate-100 text-sm font-bold text-slate-700"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -100,27 +113,23 @@
         };
 
         let currentAccess = "";
+        let myCharts = {};
 
-        // Fungsi pengecekan login
-        function checkAccess() {
+        // FUNGSI TOMBOL LOGIN (DIPERBAIKI)
+        function handleLogin() {
             const inputVal = document.getElementById('access-code').value.trim();
             
             if (ACCESS_KEYS[inputVal]) {
                 currentAccess = ACCESS_KEYS[inputVal];
-                // Sembunyikan modal, tampilkan dashboard
                 document.getElementById('login-modal').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('main-content').classList.add('opacity-100');
-                }, 50);
+                setTimeout(() => { document.getElementById('main-content').classList.add('opacity-100'); }, 50);
                 
                 document.getElementById('access-level').innerText = currentAccess;
-                fetchData(); // Ambil data dari Google Sheets
+                fetchData();
             } else {
                 document.getElementById('login-error').classList.remove('hidden');
-                setTimeout(() => {
-                    document.getElementById('login-error').classList.add('hidden');
-                }, 3000);
+                setTimeout(() => { document.getElementById('login-error').classList.add('hidden'); }, 3000);
             }
         }
 
@@ -132,7 +141,6 @@
                 let filtered = data;
                 if (currentAccess !== "PIMPINAN PUSAT") {
                     filtered = data.filter(item => {
-                        // Mencari kunci kolom wilayah secara dinamis
                         const wilayahKey = Object.keys(item).find(k => k.includes('wilayah') || k.includes('kota'));
                         const val = item[wilayahKey] ? item[wilayahKey].toString().trim().toUpperCase() : "";
                         return val === currentAccess.toUpperCase();
@@ -140,32 +148,30 @@
                 }
                 renderDashboard(filtered);
             } catch (e) {
-                console.error("Gagal memuat data:", e);
+                console.error("Fetch Error:", e);
             }
         }
 
         function renderDashboard(data) {
             let totalVR = 0, totalDapo = 0;
+            const labels = [], values = [];
+
             const rows = data.map(item => {
                 const vr = parseInt(item.siswavr) || 0;
-                const dapo = parseInt(item.siswadapodik) || 1; // Cegah pembagian nol
+                const dapo = parseInt(item.siswadapodik) || 0;
                 totalVR += vr;
                 totalDapo += dapo;
-                const pct = ((vr / dapo) * 100).toFixed(0);
+                labels.push(item.namasekolah);
+                values.push(vr);
 
+                const pct = dapo > 0 ? ((vr/dapo)*100).toFixed(0) : 0;
                 return `<tr class="hover:bg-slate-50 transition-all">
-                    <td class="p-6 font-black text-slate-800 uppercase tracking-tight">${item.namasekolah}</td>
-                    <td class="p-6 text-center font-mono">${item.siswadapodik || 0}</td>
+                    <td class="p-6 font-black text-slate-800 uppercase">${item.namasekolah}</td>
+                    <td class="p-6 text-center font-mono">${dapo}</td>
                     <td class="p-6 text-center text-blue-600 font-black">${vr}</td>
                     <td class="p-6 text-center"><span class="bg-blue-100 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-black">${pct}% SIAP</span></td>
                 </tr>`;
             }).join('');
 
             document.getElementById('stat-sekolah').innerText = data.length;
-            document.getElementById('stat-vr').innerText = totalVR.toLocaleString('id-ID');
-            document.getElementById('stat-persen').innerText = (totalDapo > 0 ? ((totalVR / totalDapo) * 100).toFixed(1) : 0) + '%';
-            document.getElementById('tabel-body').innerHTML = rows || '<tr><td colspan="4" class="p-10 text-center text-slate-400 italic font-bold tracking-widest">TIDAK ADA DATA DITEMUKAN</td></tr>';
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('stat-vr
