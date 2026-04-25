@@ -3,70 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report - Triesakti Edutainment</title>
+    <title>Executive Report - Triesakti Edutainment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 min-h-screen font-sans">
+<body class="bg-slate-100 min-h-screen">
 
-    <div id="login-modal" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-[9999]">
-        <div class="bg-white p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl">
+    <div id="login-modal" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-[999]">
+        <div class="bg-white p-10 rounded-[2.5rem] max-w-sm w-full text-center shadow-2xl">
             <img src="logo Edutainment.png" alt="Logo" class="h-16 mx-auto mb-6">
-            <h2 class="text-xl font-bold mb-4">AKSES PIMPINAN</h2>
+            <h2 class="text-xl font-bold uppercase mb-4 text-slate-800">Akses Pimpinan</h2>
             <input type="password" id="access-code" placeholder="Masukkan Kode..." 
-                class="w-full p-4 bg-slate-100 rounded-xl mb-4 text-center font-bold outline-none border-2 focus:border-blue-500">
-            <button onclick="prosesLogin()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition">
-                BUKA LAPORAN
+                class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl mb-4 text-center font-bold outline-none focus:border-blue-500">
+            <button onclick="handleLogin()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 transition shadow-lg uppercase tracking-widest">
+                Buka Laporan
             </button>
-            <p id="error-msg" class="text-red-500 text-sm mt-4 hidden">Kode Akses Salah!</p>
+            <p id="err" class="text-red-500 text-xs mt-4 hidden font-bold">Kode Salah!</p>
         </div>
     </div>
 
-    <div id="main-dashboard" class="hidden p-4 md:p-8">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm">
+    <div id="main-content" class="hidden p-4 md:p-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-3xl shadow-sm border border-white">
                 <div class="flex items-center gap-4">
                     <img src="logo Edutainment.png" alt="Logo" class="h-10">
-                    <h1 class="font-black text-slate-800 uppercase">Monitoring VR: <span id="wilayah-txt" class="text-blue-600"></span></h1>
+                    <h1 class="text-lg font-black text-slate-900 uppercase">Monitoring VR: <span id="wil" class="text-blue-600"></span></h1>
                 </div>
-                <button onclick="location.reload()" class="text-red-500 font-bold text-sm">LOGOUT</button>
+                <button onclick="location.reload()" class="bg-red-50 text-red-600 px-6 py-2 rounded-xl font-bold text-xs hover:bg-red-600 hover:text-white transition uppercase">Logout</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-slate-800">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Sekolah</p>
-                    <h2 id="s-sekolah" class="text-4xl font-black">0</h2>
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border-b-8 border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Sekolah</p>
+                    <h2 id="st-sekolah" class="text-5xl font-black text-slate-800">0</h2>
                 </div>
-                <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-blue-600">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Peserta VR</p>
-                    <h2 id="s-vr" class="text-4xl font-black text-blue-600">0</h2>
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border-b-8 border-blue-600">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Peserta VR</p>
+                    <h2 id="st-vr" class="text-5xl font-black text-blue-600">0</h2>
                 </div>
-                <div class="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-emerald-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Persentase</p>
-                    <h2 id="s-pct" class="text-4xl font-black text-emerald-600">0%</h2>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-3xl shadow-sm h-80">
-                    <canvas id="chartBar"></canvas>
-                </div>
-                <div class="bg-white p-6 rounded-3xl shadow-sm h-80">
-                    <canvas id="chartPie"></canvas>
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border-b-8 border-emerald-500">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Persentase</p>
+                    <h2 id="st-pct" class="text-5xl font-black text-emerald-600">0%</h2>
                 </div>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-sm overflow-hidden">
+            <div class="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border border-white">
                 <table class="w-full text-left">
-                    <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-400 border-b">
+                    <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase border-b">
                         <tr>
-                            <th class="p-4">Sekolah</th>
-                            <th class="p-4 text-center">Dapodik</th>
-                            <th class="p-4 text-center">VR</th>
+                            <th class="p-6">Nama Sekolah</th>
+                            <th class="p-6 text-center">Dapodik</th>
+                            <th class="p-6 text-center">Ikut VR</th>
+                            <th class="p-6 text-center">Capaian</th>
                         </tr>
                     </thead>
-                    <tbody id="tabel-isi" class="text-sm font-bold text-slate-600 divide-y divide-slate-100"></tbody>
+                    <tbody id="tb-body" class="divide-y divide-slate-50 text-sm font-bold text-slate-700 uppercase"></tbody>
                 </table>
             </div>
         </div>
@@ -74,94 +66,59 @@
 
     <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxakRVXqjxR4LLLrtnFL_c1vudbIGlaW0WapsfUiRsO3JMYhCGzmiRHWIBWfvlbdzg7/exec';
-        
-        const KEYS = {
-            "admin123": "PIMPINAN PUSAT",
-            "maros2026": "MAROS",
-            "makassar2026": "MAKASSAR",
-            "palopo2026": "PALOPO",
-            "tarakan2026": "TARAKAN"
-        };
+        const ACCESS = { "admin123": "PIMPINAN PUSAT", "maros2026": "MAROS", "palopo2026": "PALOPO" };
+        let currentWil = "";
 
-        let userAkses = "";
-        let charts = {};
-
-        // FUNGSI UTAMA TOMBOL LOGIN
-        function prosesLogin() {
-            const pin = document.getElementById('access-code').value.trim();
-            
-            if (KEYS[pin]) {
-                userAkses = KEYS[pin];
-                document.getElementById('login-modal').style.display = 'none';
-                document.getElementById('main-dashboard').style.display = 'block';
-                document.getElementById('wilayah-txt').innerText = userAkses;
-                muatData();
+        function handleLogin() {
+            const code = document.getElementById('access-code').value.trim();
+            if (ACCESS[code]) {
+                currentWil = ACCESS[code];
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                document.getElementById('wil').innerText = currentWil;
+                fetchData();
             } else {
-                document.getElementById('error-msg').style.display = 'block';
-                setTimeout(() => { document.getElementById('error-msg').style.display = 'none'; }, 2000);
+                document.getElementById('err').classList.remove('hidden');
             }
         }
 
-        async function muatData() {
+        async function fetchData() {
             try {
-                const r = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
-                const data = await r.json();
+                const res = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
+                const data = await res.json();
                 
-                let filtered = data;
-                if (userAkses !== "PIMPINAN PUSAT") {
-                    filtered = data.filter(item => {
-                        const k = Object.keys(item).find(key => key.includes('wilayah') || key.includes('kota'));
-                        return item[k]?.toString().trim().toUpperCase() === userAkses;
-                    });
-                }
-                tampilkanData(filtered);
-            } catch (e) {
-                alert("Gagal mengambil data. Pastikan internet aktif.");
-            }
+                // MENCARI KOLOM SECARA DINAMIS (Anti Gagal Sinkron)
+                const filtered = data.filter(item => {
+                    if(currentWil === "PIMPINAN PUSAT") return true;
+                    const keyWil = Object.keys(item).find(k => k.toLowerCase().includes('wilayah') || k.toLowerCase().includes('kota'));
+                    return item[keyWil]?.toString().toUpperCase() === currentWil;
+                });
+
+                render(filtered);
+            } catch (e) { alert("Koneksi gagal atau data tidak ditemukan."); }
         }
 
-        function tampilkanData(data) {
-            let tVR = 0, tDapo = 0, labels = [], values = [];
+        function render(data) {
+            let totalVR = 0, totalDapo = 0;
+            const rows = data.map(item => {
+                // Menyamakan nama kolom dari Sheets Bapak
+                const v = parseInt(item.siswavr || item.ikutvr || item.vr || 0);
+                const d = parseInt(item.siswadapodik || item.dapodik || item.jmlsiswa || 0);
+                totalVR += v; totalDapo += d;
+                const p = d > 0 ? ((v/d)*100).toFixed(0) : 0;
 
-            const html = data.map(item => {
-                const vr = parseInt(item.siswavr) || 0;
-                const dapo = parseInt(item.siswadapodik) || 0;
-                tVR += vr; tDapo += dapo;
-                labels.push(item.namasekolah);
-                values.push(vr);
-
-                return `<tr>
-                    <td class="p-4 uppercase">${item.namasekolah}</td>
-                    <td class="p-4 text-center font-mono">${dapo}</td>
-                    <td class="p-4 text-center text-blue-600">${vr}</td>
+                return `<tr class="hover:bg-slate-50">
+                    <td class="p-6">${item.namasekolah || item.sekolah}</td>
+                    <td class="p-6 text-center">${d}</td>
+                    <td class="p-6 text-center text-blue-600">${v}</td>
+                    <td class="p-6 text-center"><span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px]">${p}%</span></td>
                 </tr>`;
             }).join('');
 
-            document.getElementById('s-sekolah').innerText = data.length;
-            document.getElementById('s-vr').innerText = tVR;
-            document.getElementById('s-pct').innerText = (tDapo > 0 ? ((tVR/tDapo)*100).toFixed(1) : 0) + '%';
-            document.getElementById('tabel-isi').innerHTML = html || '<tr><td colspan="3" class="p-10 text-center uppercase">Data Kosong</td></tr>';
-
-            bikinGrafik(labels, values);
-        }
-
-        function bikinGrafik(l, v) {
-            if(charts.b) charts.b.destroy();
-            if(charts.p) charts.p.destroy();
-
-            const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#6366f1'];
-
-            charts.b = new Chart(document.getElementById('chartBar'), {
-                type: 'bar',
-                data: { labels: l, datasets: [{ label: 'Peserta VR', data: v, backgroundColor: '#3b82f6' }] },
-                options: { maintainAspectRatio: false }
-            });
-
-            charts.p = new Chart(document.getElementById('chartPie'), {
-                type: 'doughnut',
-                data: { labels: l, datasets: [{ data: v, backgroundColor: colors }] },
-                options: { maintainAspectRatio: false, cutout: '70%' }
-            });
+            document.getElementById('st-sekolah').innerText = data.length;
+            document.getElementById('st-vr').innerText = totalVR;
+            document.getElementById('st-pct').innerText = (totalDapo > 0 ? ((totalVR/totalDapo)*100).toFixed(1) : 0) + '%';
+            document.getElementById('tb-body').innerHTML = rows || '<tr><td colspan="4" class="p-10 text-center italic text-slate-400">Data Tidak Ditemukan</td></tr>';
         }
     </script>
 </body>
