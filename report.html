@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Report - Event VR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 min-h-screen font-sans">
+
+    <div id="login-modal" class="fixed inset-0 bg-slate-900/95 flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200">
+                    <i class="fas fa-user-shield text-white text-2xl"></i>
+                </div>
+                <h2 class="text-xl font-black text-slate-800 uppercase tracking-tight">Akses Laporan</h2>
+                <p class="text-slate-400 text-sm">Silakan masukkan kode wilayah</p>
+            </div>
+            <input type="password" id="access-code" placeholder="Kode Akses..." 
+                class="w-full p-4 bg-slate-100 border-2 border-transparent focus:border-blue-500 rounded-2xl outline-none text-center font-bold tracking-widest mb-4 transition-all">
+            <button onclick="checkAccess()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">
+                MASUK KE SISTEM
+            </button>
+            <p id="login-error" class="text-red-500 text-xs mt-4 text-center hidden font-bold animate-pulse">
+                <i class="fas fa-exclamation-circle mr-1"></i> Kode akses tidak terdaftar!
+            </p>
+        </div>
+    </div>
+
+    <div id="main-content" class="hidden opacity-0 transition-opacity duration-700">
+        <div class="max-w-7xl mx-auto p-4 md:p-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 border-b border-slate-200 pb-6">
+                <div>
+                    <h1 class="text-3xl font-black text-slate-900 uppercase tracking-tighter">Monitoring Event VR</h1>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+                        <p class="text-blue-600 font-bold text-sm uppercase">Wilayah: <span id="access-level"></span></p>
+                    </div>
+                </div>
+                <div class="flex gap-3 mt-5 md:mt-0 no-print">
+                    <button onclick="fetchData()" class="bg-white border border-slate-300 px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 transition flex items-center shadow-sm">
+                        <i class="fas fa-sync-alt mr-2"></i> Update Data
+                    </button>
+                    <button onclick="location.reload()" class="bg-slate-100 px-5 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-red-50 hover:text-red-500 transition">
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 border-b-4 border-b-slate-300">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Total Sekolah</p>
+                    <h2 id="stat-sekolah" class="text-5xl font-black text-slate-800">0</h2>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 border-b-4 border-b-blue-500">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Partisipan VR</p>
+                    <h2 id="stat-vr" class="text-5xl font-black text-blue-600">0</h2>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 border-b-4 border-b-emerald-500">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Efektivitas</p>
+                    <h2 id="stat-persen" class="text-5xl font-black text-emerald-600">0%</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                    <h3 class="font-black text-slate-800 mb-8 uppercase text-xs tracking-widest flex items-center">
+                        <i class="fas fa-chart-bar mr-2 text-blue-500"></i> Grafik Performa Sekolah
+                    </h3>
+                    <div class="h-[400px]">
+                        <canvas id="chartUtama"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+                    <div class="p-6 bg-slate-50 border-b border-slate-100 font-black text-[10px] uppercase text-slate-500 tracking-widest">
+                        Rincian Baris Data
+                    </div>
+                    <div class="flex-1 overflow-y-auto max-h-[450px]">
+                        <table class="w-full text-left">
+                            <thead class="sticky top-0 bg-white shadow-sm">
+                                <tr class="text-[9px] uppercase font-bold text-slate-400 border-b">
+                                    <th class="p-4">Sekolah</th>
+                                    <th class="p-4 text-right">VR</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-body" class="divide-y divide-slate-50 text-sm">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MASUKKAN URL WEB APP ANDA DI SINI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxziioX9qXZedgZPMoYnizMj9IxeN7jHzfCDYckRRYJ87CryWvnxyLPQvacWazA-Rc/exec';
+
+        // KONFIGURASI AKSES (Pastikan nama wilayah sama dengan di Sheet)
+        const ACCESS_KEYS = {
+            "admin123": "PIMPINAN PUSAT",
+            "maros2026": "MAROS",
+            "makassar2026": "MAKASSAR",
+            "palopo2026": "PALOPO",
+            "tarakan2026": "TARAKAN"
+        };
+
+        let currentAccess = "";
+        let charts = {};
+
+        function checkAccess() {
+            const inputCode = document.getElementById('access-code').value;
+            if (ACCESS_KEYS[inputCode]) {
+                currentAccess = ACCESS_KEYS[inputCode];
+                document.getElementById('login-modal').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                setTimeout(() => document.getElementById('main-content').classList.add('opacity-100'), 50);
+                document.getElementById('access-level').innerText = currentAccess;
+                fetchData();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+       async function fetchData() {
+    try {
+        const res = await fetch(SCRIPT_URL + "?t=" + new Date().getTime());
+        const data = await res.json();
+        
+        let filteredData = data;
+
+        // Jika akses bukan Pimpinan Pusat, lakukan filter wilayah
+        if (currentAccess !== "PIMPINAN PUSAT") {
+            filteredData = data.filter(item => {
+                // MENCARI KOLOM WILAYAH SECARA DINAMIS
+                // Mencari kunci (key) yang mengandung kata 'wilayah' atau 'kota'
+                const key = Object.keys(item).find(k => 
+                    k.includes('wilayah') || k.includes('kota')
+                );
+
+                if (!key) return false;
+
+                // Ambil nilainya, hilangkan spasi, dan jadikan huruf besar
+                const dataWilayah = item[key].toString().trim().toUpperCase();
+                const targetWilayah = currentAccess.trim().toUpperCase();
+
+                return dataWilayah === targetWilayah;
+            });
+        }
+
+        renderDashboard(filteredData);
+    } catch (e) {
+        console.error("Gagal mengambil data:", e);
+        alert("Terjadi kesalahan koneksi saat mengambil data.");
+    }
+}
+
+        function renderDashboard(data) {
+            let totalVR = 0;
+            let totalDapodik = 0;
+            const labels = [];
+            const values = [];
+
+            const rows = data.map(item => {
+                const vr = parseInt(item.siswavr) || 0;
+                const dapo = parseInt(item.siswadapodik) || 0;
+                const sekolah = item.namasekolah || "Tidak Diketahui";
+                
+                totalVR += vr;
+                totalDapodik += dapo;
+                labels.push(sekolah);
+                values.push(vr);
+
+                return `<tr class="hover:bg-slate-50 transition">
+                    <td class="p-4 font-bold text-slate-700">${sekolah}</td>
+                    <td class="p-4 text-right font-black text-blue-600">${vr.toLocaleString('id-ID')}</td>
+                </tr>`;
+            }).join('');
+
+            // Update Angka Statistik
+            document.getElementById('stat-sekolah').innerText = data.length;
+            document.getElementById('stat-vr').innerText = totalVR.toLocaleString('id-ID');
+            
+            const efektivitas = totalDapodik > 0 ? ((totalVR / totalDapodik) * 100).toFixed(1) : 0;
+            document.getElementById('stat-persen').innerText = efektivitas + '%';
+            
+            document.getElementById('tabel-body').innerHTML = rows || '<tr><td colspan="2" class="p-10 text-center text-slate-400 italic">Tidak ada data ditemukan</td></tr>';
+
+            updateChart(labels, values);
+        }
+
+        function updateChart(labels, values) {
+            if(charts.main) charts.main.destroy();
+            const ctx = document.getElementById('chartUtama').getContext('2d');
+            
+            // Limit chart labels agar tidak terlalu menumpuk
+            const displayLabels = labels.length > 15 ? labels.map(l => l.substring(0, 10) + '...') : labels;
+
+            charts.main = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: displayLabels,
+                    datasets: [{
+                        label: 'Peserta VR',
+                        data: values,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 8,
+                        barThickness: 25
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
