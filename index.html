@@ -3,42 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input Data Event VR - TRIESAKTI EDUTAINMENT</title>
+    <title>Sistem Cloud - Triesakti Edutainment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); }
-        /* Animasi halus saat hover button */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); 
+        }
         .btn-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-slate-100">
+    <div id="security-gate" class="fixed inset-0 bg-slate-900 flex items-center justify-center z-[9999] p-6">
+        <div class="bg-white p-10 rounded-[2.5rem] max-w-sm w-full text-center shadow-2xl">
+            <img src="logo Edutainment.png" alt="Logo" class="h-16 mx-auto mb-6">
+            <h2 class="text-xl font-black uppercase mb-2 text-slate-800">Security Access</h2>
+            <p class="text-slate-400 text-[10px] mb-8 font-bold uppercase tracking-widest">Operator Cloud System</p>
+            
+            <input type="password" id="access-code" placeholder="KODE AKSES OPERATOR" 
+                class="w-full p-4 bg-slate-100 rounded-2xl mb-4 text-center font-bold outline-none border-2 focus:border-blue-500 text-lg uppercase transition-all">
+            
+            <button onclick="unlockSystem()" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl hover:bg-blue-700 transition shadow-lg active:scale-95">
+                VERIFIKASI AKSES
+            </button>
+            <p id="err-msg" class="text-red-500 text-[10px] mt-4 hidden font-black uppercase tracking-tighter italic">Kode Akses Tidak Valid!</p>
+        </div>
+    </div>
+
+    <div id="input-container" class="hidden max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-slate-100 scale-95 opacity-0 transition-all duration-500">
         <div class="text-center mb-8">
             <div class="flex items-center justify-center mx-auto mb-4">
-                <img src="logo Edutainment.png" alt="Logo Triesakti Edutainment" class="h-20 w-auto object-contain drop-shadow-sm">
+                <img src="logo Edutainment.png" alt="Logo" class="h-20 w-auto object-contain">
             </div>
             <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Input Data Event</h2>
-            <p class="text-slate-500 text-sm font-bold tracking-wide">TRIESAKTI EDUTAINMENT - Sistem Cloud</p>
+            <p class="text-slate-500 text-sm font-bold tracking-wide">Operator: <span id="op-name" class="text-blue-600"></span></p>
         </div>
 
         <form id="formEvent" class="space-y-4">
             <div>
                 <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Nama Sekolah</label>
                 <input type="text" id="namaSekolah" placeholder="Nama SMA/SMK" 
-                    class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm font-semibold" required>
+                    class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm font-semibold uppercase" required>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Tanggal</label>
                     <input type="date" id="tanggalEvent" 
-                        class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm" required>
+                        class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm font-bold" required>
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Wilayah/Kota</label>
-                    <select id="kota" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm cursor-pointer font-semibold" required>
+                    <select id="kota" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm cursor-pointer font-bold" required>
                         <option value="">Pilih Kota</option>
                         <option>Makassar</option><option>Maros</option><option>Palopo</option><option>Tarakan</option>
                         <option>Berau</option><option>Banjarmasin</option><option>Mataram</option>
@@ -51,11 +70,11 @@
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Durasi (Hari)</label>
                     <input type="number" id="durasi" value="1" min="1" oninput="updateSesi()"
-                        class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm" required>
+                        class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm font-bold" required>
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Sesi</label>
-                    <select id="sesi" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm cursor-pointer font-semibold">
+                    <select id="sesi" class="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-500 transition shadow-sm text-sm cursor-pointer font-bold">
                     </select>
                 </div>
             </div>
@@ -64,33 +83,60 @@
                 <div>
                     <label class="block text-[10px] font-black text-blue-400 uppercase mb-1">Jml Siswa (Dapodik)</label>
                     <input type="number" id="dapodik" placeholder="0" 
-                        class="w-full p-2.5 bg-white border border-blue-100 rounded-lg outline-none focus:border-blue-500 text-sm font-bold" required>
+                        class="w-full p-2.5 bg-white border border-blue-100 rounded-lg outline-none focus:border-blue-500 text-sm font-black" required>
                 </div>
                 <div>
                     <label class="block text-[10px] font-black text-blue-400 uppercase mb-1">Siswa Ikut VR</label>
                     <input type="number" id="vr" placeholder="0" 
-                        class="w-full p-2.5 bg-white border border-blue-100 rounded-lg outline-none focus:border-blue-500 text-sm font-bold text-blue-700" required>
+                        class="w-full p-2.5 bg-white border border-blue-100 rounded-lg outline-none focus:border-blue-500 text-sm font-black text-blue-700" required>
                 </div>
             </div>
 
-            <button type="submit" id="btnSave" class="btn-hover w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-blue-600 shadow-xl shadow-slate-200 mt-4 flex items-center justify-center tracking-widest text-sm">
-                <i class="fas fa-paper-plane mr-2"></i> SIMPAN KE DATABASE
+            <button type="submit" id="btnSave" class="btn-hover w-full bg-slate-900 text-white font-black py-4 rounded-2xl hover:bg-blue-600 shadow-xl shadow-slate-200 mt-4 flex items-center justify-center tracking-widest text-sm uppercase">
+                <i class="fas fa-paper-plane mr-2"></i> Simpan ke Database
+            </button>
+            
+            <button type="button" onclick="location.reload()" class="w-full text-slate-300 font-bold text-[9px] uppercase tracking-widest mt-4 hover:text-red-500 transition-all">
+                Logout & Lock System
             </button>
         </form>
 
-        <p class="text-center text-[9px] text-slate-400 mt-6 uppercase tracking-[0.2em] font-bold italic">Reliable Solution for Educational Technology</p>
+        <p class="text-center text-[8px] text-slate-400 mt-6 uppercase tracking-[0.2em] font-bold italic">Triesakti Edutainment Cloud System</p>
     </div>
 
     <script>
-        // SINKRONISASI DENGAN GOOGLE APPS SCRIPT ANDA
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxziioX9qXZedgZPMoYnizMj9IxeN7jHzfCDYckRRYJ87CryWvnxyLPQvacWazA-Rc/exec';
 
-        // UPDATE SESI OTOMATIS BERDASARKAN DURASI
+        // DAFTAR KODE AKSES OPERATOR
+        const OPERATORS = {
+            "opmaros": "Wilayah Maros",
+            "oppalopo": "Wilayah Palopo",
+            "opmakassar": "Wilayah Makassar",
+            "optarakan": "Wilayah Tarakan"
+        };
+
+        // FUNGSI BUKA SISTEM
+        function unlockSystem() {
+            const code = document.getElementById('access-code').value.toLowerCase().trim();
+            if (OPERATORS[code]) {
+                document.getElementById('security-gate').classList.add('hidden');
+                const container = document.getElementById('input-container');
+                container.classList.remove('hidden');
+                setTimeout(() => {
+                    container.classList.remove('scale-95', 'opacity-0');
+                }, 50);
+                document.getElementById('op-name').innerText = OPERATORS[code];
+            } else {
+                document.getElementById('err-msg').classList.remove('hidden');
+                setTimeout(() => document.getElementById('err-msg').classList.add('hidden'), 2000);
+            }
+        }
+
+        // FUNGSI UPDATE SESI (Bawaan Asli)
         function updateSesi() {
             const durasi = document.getElementById('durasi').value;
             const sesiSelect = document.getElementById('sesi');
             sesiSelect.innerHTML = '';
-            
             if(durasi == 1) {
                 sesiSelect.add(new Option('Fullday', 'Fullday'));
             } else {
@@ -101,13 +147,12 @@
         }
         window.onload = updateSesi;
 
-        // PROSES PENGIRIMAN DATA KE DATABASE CLOUD
+        // PROSES PENGIRIMAN DATA
         document.getElementById('formEvent').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnSave');
-            
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> SEDANG MENGIRIM...';
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> MENGIRIM...';
 
             const payload = {
                 namaSekolah: document.getElementById('namaSekolah').value,
@@ -119,7 +164,6 @@
             };
 
             try {
-                // Proses pengiriman data menggunakan mode 'no-cors' agar kompatibel dengan Google Script
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -127,13 +171,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
-                alert('✅ BERHASIL! Data telah aman tersimpan di Google Sheet.');
+                alert('✅ DATA BERHASIL DISIMPAN!');
                 document.getElementById('formEvent').reset();
                 updateSesi();
             } catch (error) {
-                console.error('Koneksi Error:', error);
-                alert('❌ GAGAL! Periksa koneksi internet Anda atau status Google Script.');
+                alert('❌ GAGAL! Periksa koneksi internet.');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> SIMPAN KE DATABASE';
